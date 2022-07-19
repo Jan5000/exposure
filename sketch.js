@@ -195,7 +195,7 @@ function generateText() {
   let newRanText;
   for(let i = 0; i < 11; i++) {
     if (i == 0) {
-      newRanText = round(random(1, 6));
+      newRanText = round(random(100, 600));
       newRanText = newRanText.toString() + '%';
     }
     else if (i == 1) {
@@ -323,10 +323,10 @@ function initAll() {
     let text_box_width = min(width, 1200) * 0.8;
     let minSizeW = 12 / textWidth(system.text[d]) * text_box_width;
     fill(0);
-    textSize(12);
+    textSize(windowWidth/3);
     textStyle(BOLD);
     //textSize(minSizeW);
-    textSize(650)
+    //textSize(650)
     textAlign(CENTER,CENTER);
     text(system.text[d], width / 2, height / 2);
     //noFill();
@@ -470,7 +470,7 @@ function draw() {
   fill(255);
   textAlign(CENTER);
   textSize(50);
-  text(system.categoryText, width/2, height-100);
+  text(system.categoryText, width/2, height-50);
   //button.show();
   transition();
 }
