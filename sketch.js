@@ -1,5 +1,6 @@
 //var gui = new dat.GUI();
-
+var x,
+    startAt;
 
 var system = {
   text: ["3%","23%", "1534", "5.948",
@@ -13,7 +14,7 @@ var system = {
   category: ["neue Gedanken", "positive Gedanken", "zweifelnde Gedanken", "bewusste Gedanken pro Tag",
             "mal an Sex gedacht", "mal selbst hinterfragt", "mal an Essen gedacht",
             "unterbewusste Reize", "Gedanken über andere Personen",
-            "Minuten lang an nichts Konkretes gedacht", "in deutscher Sprache gedacht",],
+            "Minuten lang an nichts gedacht", "in deutscher Sprache gedacht",],
   categoryText: "",
   textPick: 0,
   flow: 1,
@@ -24,6 +25,7 @@ var system = {
   particleSizeMax: 30,
   switch: false,
   switchID: 0,
+  start: 0,
   gravity:{
     direction:90,
     force:0
@@ -72,29 +74,38 @@ let button;
         fill(0);
         textAlign(CENTER);
         textSize(25);
-        text("24h Gedankenanalyse starten", this.x+this.w/2, this.y+this.h-15);
+        text("24h Gedankenanalyse starten", this.x+this.w/2, this.y+this.h-25);
       }
     }
 
 function resetAll() {
+  clear();
   system.switch = false;
   system.switchID = 0;
   system.textPick = 0;
+  system.start = 0;
+  particles = [];
+  field = [];
+  fieldStep = 0;
+  gravity = 0;
+  particlesArray = [];
+  fieldArray = [];
+  fieldStepArray = [];
   generateText()
   initAll();
-  //init();
   initNew(0);
   startSceneGeneration();
 }
 
 function startSceneGeneration() {
-  background(255);
-  //button = new Button((width/2)-390/2, (height/2)-50/2, color(255));
+  //background(255);
+  button = new Button((width/2)-390/2, (height/2)-50, color(255));
 }
 // touch started
 function touchStarted() {
   if (button.contains(mouseX, mouseY)) {
     button.col = color('#d06516');
+
   }
   return false;
 }
@@ -103,7 +114,15 @@ function touchStarted() {
 function touchEnded() {
   button.col = color(255);
   //start sth
+  
+  startAt = millis();
+  system.start = 1;
+  setTimeout(loadtheScene,5000);
   return false;
+}
+function loadtheScene() {
+  system.start = 2;
+  setTimeout(timerSwitching,20000);
 }
 
 let colors = [
@@ -185,10 +204,10 @@ function setup() {
   colorMode(HSL, 100);
 
   startSceneGeneration();
-  setTimeout(timerSwitching,20000);
+  //setTimeout(timerSwitching,20000);
 }
 
-
+//TODO
 function generateText() {
   //0 to 21
   var genText = [];
@@ -203,11 +222,11 @@ function generateText() {
       newRanText = newRanText.toString() + '%';
     }
     else if (i == 2) {
-      newRanText = round(random(300, 900));
+      newRanText = round(random(300, 600));
       newRanText = newRanText.toString();
     }
     else if (i == 3) {
-      newRanText = round(random(1000, 3000));
+      newRanText = round(random(800, 990));
       newRanText = newRanText.toString();
     }
     else if (i == 4) {
@@ -223,7 +242,7 @@ function generateText() {
       newRanText = newRanText.toString();
     }
     else if (i == 7) {
-      newRanText = round(random(6000, 9000));
+      newRanText = round(random(600, 900));
       newRanText = newRanText.toString();
     }
     else if (i == 8) {
@@ -246,12 +265,14 @@ function generateText() {
 }
 
 function timerSwitching() {
-  system.switch = true;
-  system.switchID = 1;
-  setTimeout(timerSwitching, 20000);
+  //if(system.start == 2) {
+    system.switch = true;
+    system.switchID = 1;
+    setTimeout(timerSwitching, 20000);
+  //}
 }
 
-function keyPressed() {
+/* function keyPressed() {
   if (keyCode === LEFT_ARROW) {
     //system.lifeSpan = system.lifeSpan+1000;
     system.particleSize = system.particleSize+1;
@@ -263,7 +284,7 @@ function keyPressed() {
     system.switchID = 1;
     //init();
   }
-}
+} */
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -290,7 +311,7 @@ function transitionRemove() {
   else {
     //DO
     system.textPick++;
-    if(system.textPick > 5) {
+    if(system.textPick > 10) {
       system.textPick = 0;
     }
     initNew(system.textPick);
@@ -365,6 +386,7 @@ function initAll() {
     if(pArray.length != 0) {
       //particlesArray.push(pArray); 
       if(d > 10) {
+        //TODO
         particlesArray[d-11] = pArray;
       }
       else {
@@ -455,6 +477,20 @@ function initNew(index) {
 function draw() {
   background(0);
   //console.log(frameRate());
+  if (system.start == 0) {
+    button.show();
+  }
+  else if (system.start == 1) {
+    //background(0);
+    stroke(255);
+	  strokeWeight(10);
+	
+    x = map(millis(), startAt, startAt+5000, 0 , windowWidth);
+	  line(0, windowHeight-10, x, windowHeight-10);
+  }
+  else {
+    noStroke();
+  
   particles.forEach((particle, i) => {
     particle.addForce(gravity);
     // search field
@@ -471,6 +507,7 @@ function draw() {
   textAlign(CENTER);
   textSize( windowWidth/25);
   text(system.categoryText, width/2, height-50);
-  //button.show();
+  
   transition();
+  }
 }
