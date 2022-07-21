@@ -110,19 +110,24 @@ function touchStarted() {
   return false;
 }
 
+function stopSketch() {
+  window.location.reload();
+}
+
 // touch end
 function touchEnded() {
+  if (button.contains(mouseX, mouseY) && system.start == 0) {
   button.col = color(255);
   //start sth
-  
   startAt = millis();
   system.start = 1;
   setTimeout(loadtheScene,5000);
+  }
   return false;
 }
 function loadtheScene() {
   system.start = 2;
-  setTimeout(timerSwitching,20000);
+  setTimeout(timerSwitching,10000);
 }
 
 let colors = [
@@ -312,6 +317,7 @@ function transitionRemove() {
     //DO
     system.textPick++;
     if(system.textPick > 10) {
+      stopSketch();
       system.textPick = 0;
     }
     initNew(system.textPick);
